@@ -1,4 +1,5 @@
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Date;
 
 /**
@@ -6,37 +7,67 @@ import java.util.Date;
  */
 
 public class Main {
-    static Date date = new Date();
-    static long startProgram = date.getTime();
+
+    static File path = new File("D:\\flura");
 
     public static void main(String[] args) throws InterruptedException {
-        File path = new File("C:\\Users\\admin\\Desktop\\Path\\");
-        getFilesMas(path, String.valueOf(path));
+        System.out.println("Start script transcend file.");
+        while (true) {
+            getFilesMas();
+            Thread.sleep(60000);
+        }
     }
 
-    public static void getFilesMas(File fileList, String path) throws InterruptedException {
-        while (true) {
-            File[] files = fileList.listFiles();
+    public static void getFilesMas(){
+        try{
+            if (!path.exists()) {
+                path.mkdir();
+            }
+            File[] files = path.listFiles();
             for (File file : files) {
-                boolean lastModified = file.lastModified() > startProgram;
-                if (file.isDirectory() && lastModified) {
-                    System.out.println("Directory: " + file.getName());
-                    getFilesMas(file, path);
+                String[] fileName = String.valueOf(file).split("\\\\");
+                File[] checkFileInDir = file.listFiles();
+                if (checkFileInDir != null && checkFileInDir.length > 1) {
+                    for (File check : checkFileInDir) {
+                        if (check.isFile()) {
+                            System.out.println("Patient: " + fileName[2] + " ready for copy");
+                        }
+                    }
                 } else {
-                    if (file.getName().endsWith(".dcm") && lastModified) {
-                        String[] fileName = String.valueOf(file).split("\\\\");
-                        File copyFile = new File(path + "\\" + fileName[5] + "\\" + fileName[5] + ".dcm");
+                    getFile(file);
+                }
+            }
+        } catch (Exception e){
+            System.out.println("Path is not exist! Maybe you delete it!");
+        }
+    }
+
+    public static void getFile(File fileList) throws NullPointerException {
+        File[] files = fileList.listFiles();
+        try {
+            for (File file : files) {
+                String[] fileName = String.valueOf(file).split("\\\\");
+                if (file.isDirectory()) {
+                    System.out.println("Check directory: " + file);
+                    getFile(file);
+                } else {
+                    if (fileName[3].equals(file.getName())) {
+                        continue;
+                    }
+                    if (file.getName().endsWith(".dcm")) {
+                        File copyFile = new File(path + "\\" + fileName[2] + "\\" + fileName[2] + ".dcm");
                         boolean sucses = file.renameTo(copyFile);
                         if (sucses) {
+                            System.out.println("Patient: " + fileName[2] + " ready for copy in server");
                             System.out.println("File is copy in: " + copyFile);
-
                         } else {
                             System.out.println("Error!");
                         }
                     }
                 }
             }
-            Thread.sleep(900000);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
