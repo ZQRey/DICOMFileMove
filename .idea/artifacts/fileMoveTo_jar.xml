@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="fileMoveTo:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/fileMoveTo_jar</output-path>
+    <root id="archive" name="fileMoveTo.jar">
+      <element id="module-output" name="fileMoveTo" />
+    </root>
+  </artifact>
+</component>
